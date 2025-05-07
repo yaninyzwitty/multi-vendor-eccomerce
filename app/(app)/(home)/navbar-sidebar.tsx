@@ -18,7 +18,6 @@ interface Props {
   onOpenChange: (value?: boolean) => void;
 }
 export function NavbarSidebar({items, onOpenChange, open}: Props) {
-  console.log({items});
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="p-0 transition-none">
