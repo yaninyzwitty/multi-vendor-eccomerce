@@ -43,6 +43,47 @@ export interface UserAuthOperations {
     password: string;
   };
 }
+
+export interface Subcategory {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  slug: string;
+  parent: string;
+  subcategories: {
+    docs: Subcategory[];
+    hasNextPage: boolean;
+  };
+}
+
+export interface Category {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  slug: string;
+  color: string;
+  subcategories: {
+    docs: Subcategory[];
+    hasNextPage: boolean;
+  };
+}
+
+export interface CategoryResponse {
+  docs: Category[];
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  limit: number;
+  nextPage: number | null;
+  page: number;
+  pagingCounter: number;
+  prevPage: number | null;
+  totalDocs: number;
+  totalPages: number;
+}
+
+
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
