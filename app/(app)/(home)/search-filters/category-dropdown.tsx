@@ -4,6 +4,7 @@ import {cn} from "@/lib/utils";
 import {FlattenedCategory} from "@/types";
 import SubcategoryMenu from "./sub-category-menu";
 import {useCategoryDropdown} from "./use-category-dropdown";
+import Link from "next/link";
 
 interface CategoryDropdownProps {
   category: FlattenedCategory;
@@ -15,8 +16,14 @@ export function CategoryDropdown({
   isActive,
   isNavigationHovered,
 }: CategoryDropdownProps) {
-  const {dropdownPosition, isOpen, onMouseEnter, onMouseLeave, dropdownRef} =
-    useCategoryDropdown({category});
+  const {
+    dropdownPosition,
+    isOpen,
+    onMouseEnter,
+    onMouseLeave,
+    dropdownRef,
+    toggleDown,
+  } = useCategoryDropdown({category});
 
   return (
     <div
@@ -24,16 +31,24 @@ export function CategoryDropdown({
       ref={dropdownRef}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onClick={toggleDown}
     >
       <div className="relative ">
         <Button
           variant={"elevated"}
           className={cn(
             `h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black`,
-            isActive && !isNavigationHovered && "bg-white border-primary"
+            isActive && !isNavigationHovered && "bg-white border-primary",
+            isOpen &&
+              "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
           )}
         >
-          {category.name}
+          <Link
+            href={`/${category.slug === "all" ? "" : category.slug}`}
+            prefetch
+          >
+            {category.name}
+          </Link>
         </Button>
         {category.subcategories && category.subcategories.length > 0 && (
           <div

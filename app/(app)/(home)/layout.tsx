@@ -24,6 +24,7 @@ export default async function HomeLayout({
         exists: false,
       },
     },
+    sort: "name",
   });
 
   const formattedData: FlattenedCategory[] = data.docs.map((doc: unknown) => {
