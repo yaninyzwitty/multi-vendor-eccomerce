@@ -11,11 +11,19 @@ export const useCategoryDropdown = ({category}: useCategoryDropdownProps) => {
   const {getdropdownPosition} = useDropdownPosition(dropdownRef);
   const dropdownPosition = getdropdownPosition();
 
+
   const onMouseEnter = () => {
     if (category.subcategories) {
       setIsOpen(true);
     }
   };
+
+  const toggleDown = () => {
+       if(category.subcategories?.length) {
+      setIsOpen(!isOpen)
+    }
+
+  }
 
   const onMouseLeave = () => setIsOpen(false);
 
@@ -24,6 +32,7 @@ export const useCategoryDropdown = ({category}: useCategoryDropdownProps) => {
     dropdownPosition,
     onMouseEnter,
     onMouseLeave,
-    dropdownRef
+    dropdownRef,
+    toggleDown
   };
 };
