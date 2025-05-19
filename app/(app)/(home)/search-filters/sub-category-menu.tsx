@@ -1,8 +1,8 @@
-import {FlattenedCategory} from "@/types";
+import {CategoriesGetSingleOutput} from "@/modules/categories/types";
 import Link from "next/link";
 
 interface SubcategoryMenuProps {
-  category: FlattenedCategory;
+  category: CategoriesGetSingleOutput;
   isOpen: boolean;
   position: {top: number; left: number};
 }

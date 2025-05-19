@@ -1,9 +1,9 @@
-import {useRef, useState} from "react";
-import {useDropdownPosition} from "./use-dropdown-position";
-import {FlattenedCategory} from "@/types";
+import { CategoriesGetSingleOutput } from "@/modules/categories/types";
+import { useRef, useState } from "react";
+import { useDropdownPosition } from "./use-dropdown-position";
 
 interface useCategoryDropdownProps {
-  category: FlattenedCategory;
+  category: CategoriesGetSingleOutput;
 }
 export const useCategoryDropdown = ({category}: useCategoryDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
