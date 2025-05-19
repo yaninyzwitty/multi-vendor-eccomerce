@@ -1,14 +1,14 @@
 "use client";
-import {FlattenedCategory} from "@/types";
-import {CategoryDropdown} from "./category-dropdown";
-import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
+import {CategoriesGetManyOutput} from "@/modules/categories/types";
 import {ListFilterIcon} from "lucide-react";
+import {useEffect, useRef, useState} from "react";
 import {CategoriesSidebar} from "./categories-sidebar";
+import {CategoryDropdown} from "./category-dropdown";
 
 interface Props {
-  data: FlattenedCategory[];
+  data: CategoriesGetManyOutput;
 }
 
 export function Categories({data}: Props) {
@@ -66,11 +66,7 @@ export function Categories({data}: Props) {
     <div className="relative w-full">
       {/* render categories sidebar */}
 
-      <CategoriesSidebar
-        open={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
-        data={data}
-      />
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
       {/* Hidden div to measure all items */}
       <div
         ref={measureRef}
@@ -129,29 +125,6 @@ export function Categories({data}: Props) {
           </div>
         )}
       </div>
-
-      {/* Sidebar for all categories when "View All" is clicked
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
-          <div className="absolute right-0 top-0 h-full w-64 bg-white p-4 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-medium">All Categories</h3>
-              <button onClick={() => setIsSidebarOpen(false)}>×</button>
-            </div>
-            <div className="space-y-2">
-              {data.map((category) => (
-                <div key={category.id}>
-                  <CategoryDropdown
-                    category={category}
-                    isActive={activeCategory === category.slug}
-                    isNavigationHovered={false}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

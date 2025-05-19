@@ -1,13 +1,13 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {FlattenedCategory} from "@/types";
+import {CategoriesGetSingleOutput} from "@/modules/categories/types";
+import Link from "next/link";
 import SubcategoryMenu from "./sub-category-menu";
 import {useCategoryDropdown} from "./use-category-dropdown";
-import Link from "next/link";
 
 interface CategoryDropdownProps {
-  category: FlattenedCategory;
+  category: CategoriesGetSingleOutput;
   isActive: boolean;
   isNavigationHovered: boolean;
 }
