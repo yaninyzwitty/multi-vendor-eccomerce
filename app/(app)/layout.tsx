@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {DM_Sans} from "next/font/google";
 import "./globals.css";
 import {TRPCReactProvider} from "@/trpc/client";
+import {Toaster} from "sonner";
 
 const dm_sans = DM_Sans({
   variable: "--font-geist-sans",
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${dm_sans.variable} ${dm_sans.variable} antialiased`}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Toaster />
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );
