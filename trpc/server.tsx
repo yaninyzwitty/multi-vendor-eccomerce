@@ -22,6 +22,10 @@ export function HydrateClient(props: {children: React.ReactNode}) {
     </HydrationBoundary>
   );
 }
+
+// ...
+export const caller = appRouter.createCaller(createTRPCContext);
+
 // export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
 //   queryOptions: T,
 // ) {

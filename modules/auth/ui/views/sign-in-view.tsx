@@ -10,9 +10,7 @@ import {
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {cn} from "@/lib/utils";
-import {useTRPC} from "@/trpc/client";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useMutation} from "@tanstack/react-query";
 import {Poppins} from "next/font/google";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -20,24 +18,39 @@ import {useForm} from "react-hook-form";
 import {toast} from "sonner";
 import {z} from "zod";
 import {loginSchema} from "../../schemas";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useTRPC} from "@/trpc/client";
 
 const poppins = Poppins({
   weight: ["700"],
   subsets: ["latin"],
 });
 export function SignInView() {
-  const trpc = useTRPC();
   const router = useRouter();
-  const login = useMutation(
-    trpc.auth.login.mutationOptions({
-      onError: (error) => {
-        toast.error(error.message);
-      },
-      onSuccess: () => {
-        router.push(`/`);
-      },
-    })
-  );
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+  const login = useMutation({
+    mutationFn: async (data: z.infer<typeof loginSchema>) => {
+      const res = await fetch("/api/users/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("failed to login");
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   const form = useForm<z.infer<typeof loginSchema>>({
     mode: "all",
     resolver: zodResolver(loginSchema),
@@ -127,3 +140,17 @@ export function SignInView() {
     </div>
   );
 }
+
+// mutationFn: async (data: z.infer<typeof loginSchema>) => {
+//   const res = await fetch("/api/users/login", {
+//     method: "POST",
+//     body: JSON.stringify(data),
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+
+//   if (!res.ok) {
+//     throw new Error("failed to login");
+//   }
+// },
