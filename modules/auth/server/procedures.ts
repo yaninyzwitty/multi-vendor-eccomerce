@@ -1,8 +1,9 @@
+
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { headers as getHeaders, cookies as getCookies } from "next/headers"
-import { AUTH_COOKIE } from "../constants";
+import { headers as getHeaders } from "next/headers";
 import { loginSchema, registerSchema } from "../schemas";
+import { generateAuthCookie } from "../utils";
 
 export const authRouter = createTRPCRouter({
     session:
@@ -50,16 +51,11 @@ export const authRouter = createTRPCRouter({
                    if(!data.token) {
                     throw new TRPCError({ code:'UNAUTHORIZED', message: 'Failed to login'})
                    };
-                   const cookies = await getCookies();
-                   cookies.set({
-                    name: AUTH_COOKIE,
-                    value: data.token,
-                    httpOnly: true,
-                    // secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'none',
-                    // maxAge: 60 * 60 * 24 * 7, // 1 week
-                    path: '/'
-                   });
+
+                   await generateAuthCookie({ 
+                    prefix: ctx.db.config.cookiePrefix,
+                    value: data.token
+                   })
 
                    return data;
                     
@@ -78,29 +74,28 @@ export const authRouter = createTRPCRouter({
                     }
                    });
 
+
                    if(!data.token) {
                     throw new TRPCError({ code:'UNAUTHORIZED', message: 'Failed to login'})
                    };
-                   const cookies = await getCookies();
-                   cookies.set({
-                    name: AUTH_COOKIE,
-                    value: data.token,
-                    httpOnly: true,
-                    // secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'none',
-                    // maxAge: 60 * 60 * 24 * 7, // 1 week
-                    path: '/'
-                   });
+
+
+                   console.log({ token: data.token})
+                   console.log({ prefix: ctx.db.config.cookiePrefix})
+                    await generateAuthCookie({ 
+                    prefix: ctx.db.config.cookiePrefix,
+                    value: data.token
+                   })
 
                    return data;
                     
                 }),
 
-    logout: baseProcedure.mutation(async () => {
-        const cookies = await getCookies();
-        cookies.delete(AUTH_COOKIE);
-        return true;
-    })
+    // logout: baseProcedure.mutation(async () => {
+    //     const cookies = await getCookies();
+    //     cookies.delete(AUTH_COOKIE);
+    //     return true;
+    // })
     
 });
 
