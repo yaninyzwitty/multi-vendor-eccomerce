@@ -1,9 +1,12 @@
+import {
+  SearchFilters,
+  SearchFiltersLoading,
+} from "@/modules/home/ui/components/search-filters";
+import {Footer} from "@/modules/home/ui/components/search-filters/footer";
+import {Navbar} from "@/modules/home/ui/components/search-filters/navbar";
 import {getQueryClient, trpc} from "@/trpc/server";
 import {dehydrate, HydrationBoundary} from "@tanstack/react-query";
 import {Suspense} from "react";
-import {Footer} from "./footer";
-import {Navbar} from "./navbar";
-import {SearchFilters, SearchFiltersLoading} from "./search-filters";
 
 export default async function HomeLayout({
   children,

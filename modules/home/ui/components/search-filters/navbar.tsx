@@ -4,11 +4,11 @@ import {cn} from "@/lib/utils";
 import {Poppins} from "next/font/google";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {NavbarSidebar} from "./navbar-sidebar";
 import {useState} from "react";
 import {Menu} from "lucide-react";
 import {useTRPC} from "@/trpc/client";
 import {useQuery} from "@tanstack/react-query";
+import {NavbarSidebar} from "./navbar-sidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],
