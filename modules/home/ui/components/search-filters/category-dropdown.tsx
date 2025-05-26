@@ -4,8 +4,7 @@ import {cn} from "@/lib/utils";
 import {CategoriesGetSingleOutput} from "@/modules/categories/types";
 import Link from "next/link";
 import SubcategoryMenu from "./sub-category-menu";
-import {useCategoryDropdown} from "./use-category-dropdown";
-
+import {useCategoryDropdown} from "@/hooks/use-category-dropdown";
 interface CategoryDropdownProps {
   category: CategoriesGetSingleOutput;
   isActive: boolean;

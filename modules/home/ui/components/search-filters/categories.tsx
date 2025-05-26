@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {CategoriesGetManyOutput} from "@/modules/categories/types";
 import {ListFilterIcon} from "lucide-react";
+import {useParams} from "next/navigation";
 import {useEffect, useRef, useState} from "react";
 import {CategoriesSidebar} from "./categories-sidebar";
 import {CategoryDropdown} from "./category-dropdown";
@@ -15,13 +16,14 @@ export function Categories({data}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
+  const params = useParams();
 
   const [visibleCount, setVisibleCount] = useState(data.length);
   const [isAnyHover, setIsAnyHover] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // mock active category
-  const activeCategory = "all";
+  const categoryParam = params.category as string | undefined;
+  const activeCategory = categoryParam || "all";
   const activeCategoryIndex = data.findIndex(
     (category) => category.slug === activeCategory
   );
@@ -63,7 +65,7 @@ export function Categories({data}: Props) {
   }, [data.length]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mt-1">
       {/* render categories sidebar */}
 
       <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
@@ -104,6 +106,7 @@ export function Categories({data}: Props) {
         {/* "View All" dropdown for hidden categories */}
         <div ref={viewAllRef} className="shrink-0">
           <Button
+            variant={"elevated"}
             className={cn(
               "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
               isActiveCategoryHidden && !isAnyHover && "bg-white border-primary"
