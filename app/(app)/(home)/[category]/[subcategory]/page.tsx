@@ -1,4 +1,5 @@
 import {ProductListView} from "@/modules/products/ui/views/product-list-view";
+import {DEFAULT_LIMIT} from "@/modules/tags/constants";
 import {getQueryClient, trpc} from "@/trpc/server";
 import {dehydrate, HydrationBoundary} from "@tanstack/react-query";
 interface SubCategoryPageProps {
@@ -16,13 +17,15 @@ export default async function SubCategoryPage({
   const {subcategory} = await params;
   const {maxPrice, minPrice, tags} = await searchParams;
 
+  // 
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(
-    trpc.products.getMany.queryOptions({
+  void queryClient.prefetchInfiniteQuery(
+    trpc.products.getMany.infiniteQueryOptions({
       category: subcategory,
       maxPrice,
       minPrice,
       tags,
+      limit: DEFAULT_LIMIT,
     })
   );
 
