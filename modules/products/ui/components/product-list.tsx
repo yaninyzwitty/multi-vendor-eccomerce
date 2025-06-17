@@ -8,8 +8,9 @@ import {useParams} from "next/navigation";
 import {useProductFilters} from "../../hooks/use-product-filters";
 import ProductCard, {ProductCardSkeleton} from "./product-card";
 import {InboxIcon} from "lucide-react";
+import {cn} from "@/lib/utils";
 
-export function ProductList() {
+export function ProductList({narrowView}: {narrowView?: boolean}) {
   const params = useParams();
   const trpc = useTRPC();
   const [filters] = useProductFilters();
@@ -20,6 +21,7 @@ export function ProductList() {
         {
           category:
             (params.subcategory as string) || (params.category as string),
+          tenantSlug: (params.slug as string) || undefined,
           ...filters,
           limit: DEFAULT_LIMIT,
         },
@@ -41,22 +43,30 @@ export function ProductList() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div
+        className={cn(
+          "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4",
+          narrowView && "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3"
+        )}
+      >
         {data.pages
           .flatMap((page) => page.docs)
-          .map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              imageUrl={product.image?.url}
-              authorUsername={"witty"}
-              authorImageUrl={undefined}
-              reviewRating={3}
-              reviewCount={5}
-              price={product.price}
-            />
-          ))}
+          .map((product) => {
+            console.log({image: product.tenant.image?.url});
+            return (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                imageUrl={product.image?.url}
+                tenantSlug={product.tenant.slug}
+                tenantImageUrl={product.tenant.image?.url}
+                reviewRating={3}
+                reviewCount={5}
+                price={product.price}
+              />
+            );
+          })}
       </div>
       <div className="flex pt-8 justify-center">
         {hasNextPage && (
@@ -74,9 +84,14 @@ export function ProductList() {
   );
 }
 
-export function ProductListSkeleton() {
+export function ProductListSkeleton({narrowView}: {narrowView?: boolean}) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+    <div
+      className={cn(
+        "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4",
+        narrowView && "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3"
+      )}
+    >
       {Array.from({length: DEFAULT_LIMIT}).map((_, INDEX) => (
         <ProductCardSkeleton key={INDEX} />
       ))}
