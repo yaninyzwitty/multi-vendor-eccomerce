@@ -23,3 +23,7 @@ export const formatAsCurrency = (value: string) => {
     maximumFractionDigits: 2,
   }).format(numberValue);
 };
+
+export function generateTenantUrl(tenantSlug: string) {
+  return `/tenants/${tenantSlug}`;
+}

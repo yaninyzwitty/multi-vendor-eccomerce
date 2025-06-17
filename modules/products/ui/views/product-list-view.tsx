@@ -3,7 +3,7 @@ import {ProductFilters} from "../components/product-filters";
 import {ProductSort} from "../components/product-sort";
 import {ProductList, ProductListSkeleton} from "../components/product-list";
 
-export const ProductListView = () => {
+export const ProductListView = ({narrowView}: {narrowView?: boolean}) => {
   return (
     <>
       <div className="px-4 lg:px-12 py-8 flex flex-col gap-4">
@@ -16,8 +16,10 @@ export const ProductListView = () => {
             <ProductFilters />
           </div>
           <div className="lg:col-span-4 xl:col-span-6">
-            <Suspense fallback={<ProductListSkeleton />}>
-              <ProductList />
+            <Suspense
+              fallback={<ProductListSkeleton narrowView={narrowView} />}
+            >
+              <ProductList narrowView={narrowView} />
             </Suspense>
           </div>
         </div>
