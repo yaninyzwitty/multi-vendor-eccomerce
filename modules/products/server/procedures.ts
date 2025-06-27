@@ -6,6 +6,29 @@ import { sortValues } from "../types";
 import { DEFAULT_LIMIT } from "@/modules/tags/constants";
 
 export const productsRouter = createTRPCRouter({
+    getOne:
+        baseProcedure
+            .input(
+                z.object({
+                    id: z.string()
+                })
+            ).query(async ({ ctx, input }) => {
+                const product = await ctx.db.findByID({
+                    collection: 'products',
+                    id: input.id,
+                    depth: 2, // be explicit, load product.image, product.tenant, product.tenant.image
+                });
+
+                return {
+                    ...product,
+                    image: product.image as Media | null,
+                    tenant: product.tenant as Tenant & {
+                        image: Media | null
+                    }
+                };
+
+            }),
+
     getMany:
         baseProcedure
             .input(
@@ -20,12 +43,12 @@ export const productsRouter = createTRPCRouter({
                     tenantSlug: z.string().nullable().optional()
                 })
             )
-                .query(async ({ ctx, input  }) => {
+            .query(async ({ ctx, input }) => {
 
                 // add sorting logic
                 const where: Where = {};
                 let sort: Sort = "-createdAt"
-                if (input.sort === 'curated' ) {
+                if (input.sort === 'curated') {
                     sort = "-createdAt"
                 }
                 if (input.sort === 'hot-and-new') {
@@ -40,8 +63,8 @@ export const productsRouter = createTRPCRouter({
                         equals: input.tenantSlug
                     }
                 }
-            
-            
+
+
                 if (input.minPrice && input.maxPrice) {
                     where.price = {
                         greater_than_equal: input.minPrice,
@@ -53,11 +76,11 @@ export const productsRouter = createTRPCRouter({
                         greater_than_equal: input.minPrice
                     }
                 } else if (input.maxPrice) {
-                   where.price =   {
-                   less_than_equal: input.maxPrice
+                    where.price = {
+                        less_than_equal: input.maxPrice
                     }
                 }
-                
+
                 if (input.category) {
                     const categoriesData = await ctx.db.find({
                         collection: 'categories',
@@ -70,38 +93,38 @@ export const productsRouter = createTRPCRouter({
                             }
                         }
                     });
-                    
-
-                     const formattedData = categoriesData.docs.map((doc) => {
-                                    return {
-                                        ...doc,
-                                        // coz of depth one
-                                        subcategories: (doc.subcategories?.docs ?? []).map(
-                                        (doc) => ({
-                                            ...(doc as Category),
-                                            subcategories: undefined
-                                        })
-                                        ),
-                                    };
-                                    });
-
-                        const subCategoriesSlugs = [];
-                        const parentCategory = formattedData[0];
 
 
-                    if(parentCategory) {
-                        subCategoriesSlugs.push(...parentCategory.subcategories.map((subcategory) => subcategory.slug ))
+                    const formattedData = categoriesData.docs.map((doc) => {
+                        return {
+                            ...doc,
+                            // coz of depth one
+                            subcategories: (doc.subcategories?.docs ?? []).map(
+                                (doc) => ({
+                                    ...(doc as Category),
+                                    subcategories: undefined
+                                })
+                            ),
+                        };
+                    });
+
+                    const subCategoriesSlugs = [];
+                    const parentCategory = formattedData[0];
+
+
+                    if (parentCategory) {
+                        subCategoriesSlugs.push(...parentCategory.subcategories.map((subcategory) => subcategory.slug))
 
                         where['category.slug'] = {
                             in: [parentCategory.slug, ...subCategoriesSlugs]
                         }
-                        
+
                     }
 
-                   
+
                 }
 
-                if (input.tags && input.tags.length > 0 ){
+                if (input.tags && input.tags.length > 0) {
                     where['tags.name'] = {
                         in: input.tags
                     }
@@ -109,12 +132,12 @@ export const productsRouter = createTRPCRouter({
 
 
                 const data = await ctx.db.find({
-                collection: "products",
-                depth: 2, //populate image and category, tenant, tenant.image,
-                where,
-                sort,
-                page: input.cursor,
-                limit: input.limit
+                    collection: "products",
+                    depth: 2, //populate image and category, tenant, tenant.image,
+                    where,
+                    sort,
+                    page: input.cursor,
+                    limit: input.limit
 
                 });
 
@@ -129,6 +152,6 @@ export const productsRouter = createTRPCRouter({
                             image: Media | null
                         }
                     }))
-                };               
+                };
             })
 });
