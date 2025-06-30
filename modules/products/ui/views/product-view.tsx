@@ -7,8 +7,10 @@ import {useTRPC} from "@/trpc/client";
 import {useSuspenseQuery} from "@tanstack/react-query";
 import {LinkIcon, StarIcon} from "lucide-react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {Fragment} from "react";
+// import {CartButton} from "../components/cart-button"; -- causes hydration errors,❌ - use next/dynamic
 
 interface ProductViewProps {
   tenantSlug: string;
@@ -17,13 +19,23 @@ interface ProductViewProps {
 
 // TODO-aDD REAL ratings
 
+const CartButton = dynamic(
+  () => import("../components/cart-button").then((mod) => mod.CartButton),
+  {
+    ssr: false,
+    loading: () => (
+      <Button variant={"elevated"} className="flex-1 bg-pink-500" disabled>
+        Add to Cart
+      </Button>
+    ),
+  }
+); // mod because its named import
+
 export function ProductView({productId, tenantSlug}: ProductViewProps) {
   const trpc = useTRPC();
   const {data: product} = useSuspenseQuery(
     trpc.products.getOne.queryOptions({id: productId})
   );
-
-  console.log({tenant: product.tenant});
 
   return (
     <div className="px-4 lg:px-12 py-10">
@@ -96,9 +108,7 @@ export function ProductView({productId, tenantSlug}: ProductViewProps) {
             <div className=" border-t lg:border-t-0 lg:border-l">
               <div className="flex flex-col gap-4 p-6 border-b">
                 <div className="flex flex-row items-center gap-2">
-                  <Button variant={"elevated"} className="flex-1 bg-pink-500">
-                    Add to Cart
-                  </Button>
+                  <CartButton productId={productId} tenantSlug={tenantSlug} />
                   <Button
                     className="size-12 "
                     variant={"elevated"}
