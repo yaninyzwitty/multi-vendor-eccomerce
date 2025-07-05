@@ -17,6 +17,19 @@ export const productsRouter = createTRPCRouter({
                     collection: 'products',
                     id: input.id,
                     depth: 2, // be explicit, load product.image, product.tenant, product.tenant.image
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        price: true,
+                        image: true,
+                        tenant: true,
+                        category: true,
+                        tags: true,
+                        refundPolicy: true,
+                        createdAt: true,
+                        updatedAt: true
+                    }
                 });
 
                 return {
@@ -137,8 +150,21 @@ export const productsRouter = createTRPCRouter({
                     where,
                     sort,
                     page: input.cursor,
-                    limit: input.limit
-
+                    limit: input.limit,
+                    // Explicitly select all fields to ensure price is included
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        price: true,
+                        image: true,
+                        tenant: true,
+                        category: true,
+                        tags: true,
+                        refundPolicy: true,
+                        createdAt: true,
+                        updatedAt: true
+                    }
                 });
 
 
