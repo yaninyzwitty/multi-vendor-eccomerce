@@ -28,7 +28,10 @@ export const useCartStore = create<CartState>()(
                     tenantCarts: {
                         ...state.tenantCarts,
                         [tenantSlug]: {
-                            productIds: [...(state.tenantCarts[tenantSlug]?.productIds || []), productId]
+                            productIds: [
+                                ...(state.tenantCarts[tenantSlug]?.productIds || []).filter(id => id !== productId),
+                                productId
+                            ]
                         }
                     }
                 }))
@@ -38,11 +41,11 @@ export const useCartStore = create<CartState>()(
                     tenantCarts: {
                         ...state.tenantCarts,
                         [tenantSlug]: {
-                            productIds: state.tenantCarts[tenantSlug]?.productIds.filter((id) => id !== productId) || [] // filter out the productId from specific tenant cart
+                            productIds: (state.tenantCarts[tenantSlug]?.productIds || []).filter(id => id !== productId)
                         }
                     }
                 }))
-            },
+            },         
             clearCart(tenantSlug) {
                 set((state) => ({
                     tenantCarts: {
