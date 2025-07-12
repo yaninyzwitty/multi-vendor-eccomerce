@@ -2,25 +2,55 @@
 
 import {generateTenantUrl} from "@/lib/utils";
 import {useTRPC} from "@/trpc/client";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {InboxIcon, Loader2} from "lucide-react";
 import {useEffect} from "react";
 import {toast} from "sonner";
 import {useCart} from "../../hooks/use-cart";
 import {CheckoutItem} from "../components/checkout-item";
 import {CheckoutSidebar} from "../components/checkout-sidebar";
+import {useCheckoutStates} from "../../hooks/use-checkout-states";
+import {useRouter} from "next/navigation";
 
 interface Props {
   tenantSlug: string;
 }
 export function CheckoutView({tenantSlug}: Props) {
-  const {productIds, clearAllCarts, removeProduct} = useCart(tenantSlug);
+  const {productIds, clearAllCarts, clearCart, removeProduct} =
+    useCart(tenantSlug);
   const trpc = useTRPC();
+  const [states, setStates] = useCheckoutStates();
+  const router = useRouter();
   const {data, error, isLoading} = useQuery(
     trpc.checkout.getProducts.queryOptions({
       ids: productIds,
     })
   );
+  const purchase = useMutation(
+    trpc.checkout.purchase.mutationOptions({
+      onMutate: () => {
+        setStates({success: false, cancel: false});
+      },
+      onSuccess: (data) => {
+        window.location.href = data.url;
+      },
+      onError: (error) => {
+        if (error.data?.code === "UNAUTHORIZED") {
+          // TODO - modify when sub-domains enabled
+          router.push(`/sign-in`);
+        }
+        toast.error(error.message);
+      },
+    })
+  );
+  useEffect(() => {
+    if (states.success) {
+      setStates({success: false, cancel: false});
+      clearCart();
+      router.push(`/products`);
+      // TODO-invalidate the library
+    }
+  }, [states.success, clearCart, router, setStates]);
 
   useEffect(() => {
     if (!error) return;
@@ -74,9 +104,14 @@ export function CheckoutView({tenantSlug}: Props) {
         <div className="lg:col-span-3">
           <CheckoutSidebar
             total={data?.totalPrice ?? 0}
-            onCheckout={() => {}}
-            isCanceled={false}
-            isPending={isLoading}
+            onPurchase={() =>
+              purchase.mutate({
+                productIds,
+                tenantSlug,
+              })
+            }
+            isCanceled={states.cancel}
+            isPending={purchase.isPending}
           />
         </div>
       </div>
