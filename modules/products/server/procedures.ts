@@ -39,33 +39,35 @@ export const productsRouter = createTRPCRouter({
                 let isPurchased = false;
 
                 if (session.user) {
-                    // fetch an order
-                    const ordersData = await ctx.db.find({
-                        collection: "orders",
-                        pagination: false,
-                        limit: 1,
-                        where: {
-                            and: [
-                                {
-                                    product:{
-                                        equals: input.id
+                    try {
+                        // Check if user has purchased this product
+                        const ordersData = await ctx.db.find({
+                            collection: "orders",
+                            pagination: false,
+                            limit: 1,
+                            where: {
+                                and: [
+                                    {
+                                        product: {
+                                            equals: input.id
+                                        }
+                                    },
+                                    {
+                                        user: {
+                                            equals: session.user.id
+                                        }
                                     }
-                                },
-                                {
-                                    user: {
-                                        equals: session.user.id
-                                    }
-                                }
-                            ]
-                        }
-                       
-                    });
+                                ]
+                            }
+                        });
 
-                    isPurchased = !!ordersData.docs[0]
-
-
+                        isPurchased = ordersData.docs && ordersData.docs.length > 0;
+                    } catch (error) {
+                        // Log error but don't fail the entire request
+                        console.error('Error checking purchase status:', error);
+                        isPurchased = false;
+                    }
                 }
-
                 return {
                     ...product,
                     image: product.image as Media | null,

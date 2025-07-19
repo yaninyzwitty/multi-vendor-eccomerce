@@ -12,7 +12,7 @@ export default async function Library() {
   );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <LibraryView />;
+      <LibraryView />
     </HydrationBoundary>
   );
 }

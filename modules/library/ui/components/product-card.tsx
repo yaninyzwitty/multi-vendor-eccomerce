@@ -36,7 +36,7 @@ export default function ProductCard({
             className="object-cover"
           />
         </div>
-        <div className="p-4 border-y flex flex-col gap-3 flex-1">
+        <div className="p-4 border-y flex flex-col gap-3 flex-1 justify-between">
           <h2 className="text-lg font-medium line-clamp-4">{name}</h2>
           <div className="flex items-center gap-2">
             {tenantImageUrl && (
@@ -58,18 +58,16 @@ export default function ProductCard({
               </p>
             </div>
           )}
-          <div className="p-4 ">
-            <div className="relative py-1 px-2 border bg-pink-400 w-fit">
-              <p className="text-sm font-medium">
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  maximumFractionDigits: 0,
-                }).format(Number(price))}
-              </p>
-            </div>
+          <div className="relative py-1 px-2 border bg-pink-400 w-fit">
+            <p className="text-sm font-medium">
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                maximumFractionDigits: 0,
+              }).format(Number(price))}
+            </p>
           </div>
-        </div>
+        </div>{" "}
       </div>
     </Link>
   );
