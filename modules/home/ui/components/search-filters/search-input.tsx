@@ -33,9 +33,9 @@ export function SearchInput({disabled}: SearchInputProps) {
       >
         <ListFilterIcon />
       </Button>
-      {session?.user && (
+      {session?.user?.id && (
         <Button variant={"elevated"} asChild>
-          <Link href={`/library`}>
+          <Link href={`/library`} prefetch>
             <BookmarkCheck />
             Library
           </Link>
