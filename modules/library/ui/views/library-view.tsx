@@ -7,7 +7,7 @@ export function LibraryView() {
   return (
     <div className="min-h-screen bg-white">
       <nav className="p-4 bg-[#f4f4f0] w-full border-b">
-        <Link href={`/library`} className="flex items-center gap-2">
+        <Link href={`/`} className="flex items-center gap-2">
           <ArrowLeft className="size-4" />
           <span className="text-sm font-medium">Continue Shopping</span>
         </Link>
