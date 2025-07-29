@@ -24,6 +24,7 @@ export default function ProductCard({
 
   imageUrl,
 }: ProductCardProps) {
+  console.log({reviewCount, reviewRating});
   return (
     <Link href={`/library/${id}`}>
       <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden flex flex-col h-full">
