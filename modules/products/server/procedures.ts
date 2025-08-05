@@ -33,7 +33,7 @@ export const productsRouter = createTRPCRouter({
                         tags: true,
                         refundPolicy: true,
                         createdAt: true,
-                        updatedAt: true
+                        updatedAt: true,
                     }
                 });
                 let isPurchased = false;
@@ -250,7 +250,7 @@ export const productsRouter = createTRPCRouter({
                         tags: true,
                         refundPolicy: true,
                         createdAt: true,
-                        updatedAt: true
+                        updatedAt: true,
                     }
                 });
 
