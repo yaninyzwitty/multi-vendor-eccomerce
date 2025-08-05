@@ -1,11 +1,19 @@
 import {SignInView} from "@/modules/auth/ui/views/sign-in-view";
-import {caller} from "@/trpc/server";
+import config from "@payload-config";
 import {redirect} from "next/navigation";
 
+import {headers as getHeaders} from "next/headers";
+import {getPayload} from "payload";
+
 export default async function SignInPage() {
-  const session = await caller.auth.session();
+  const headers = await getHeaders();
+  const payload = await getPayload({config});
+
+  const session = await payload.auth({headers});
+
   if (session.user) {
     redirect("/");
   }
+
   return <SignInView />;
 }
