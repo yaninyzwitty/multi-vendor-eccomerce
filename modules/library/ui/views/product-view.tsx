@@ -4,6 +4,7 @@ import {useSuspenseQuery} from "@tanstack/react-query";
 import {ArrowLeft} from "lucide-react";
 import Link from "next/link";
 import {ReviewSidebar} from "../../../reviews/ui/components/review-sidebar";
+import {RichText} from "@payloadcms/richtext-lexical/react";
 
 interface Props {
   productId: string;
@@ -15,6 +16,8 @@ export function ProductView({productId}: Props) {
       productId,
     })
   );
+  console.log(data.description);
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="p-4 bg-[#f4f4f0] w-full border-b">
@@ -37,15 +40,13 @@ export function ProductView({productId}: Props) {
             </div>
           </div>
           <div className="lg:col-span-5">
-            <p className="font-medium italic text-muted-foreground">
-              {data.content ? (
-                <p>{data.content}</p>
-              ) : (
-                <p className="font-medium italic text-muted-foreground">
-                  No special content
-                </p>
-              )}
-            </p>
+            {data.description ? (
+              <RichText data={data.description} className="prose" />
+            ) : (
+              <p className="font-medium italic text-muted-foreground">
+                No special content
+              </p>
+            )}
           </div>
         </div>
       </section>

@@ -23,6 +23,7 @@ import { Config } from './payload-types'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+
 export default buildConfig({
   admin: {
     user: Users.slug,

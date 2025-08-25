@@ -23,6 +23,7 @@ export const Products: CollectionConfig = {
                 }
             }
         },
+        delete : ({ req }) => isSuperAdmin(req.user)
 
     },
     admin: {
@@ -37,8 +38,8 @@ export const Products: CollectionConfig = {
             required: true
         },
         {
-            name: 'description', //TODO-change to richtext
-            type: 'text'
+            name: 'description', 
+            type: 'richText'
         }, 
         {
             name: 'price',
@@ -73,12 +74,31 @@ export const Products: CollectionConfig = {
         },
         {
             name: 'content',
-            type: 'textarea', // TODO change to richtext
+            type: 'richText', //
             admin: {
                 description: "Protected content only visible to customers after purchase.Add product documentation, downloadable files, getting started guides etc."
             }
             
             
+        },
+        {
+            name: 'isArchived',
+            label: 'Archive',
+            defaultValue: false,
+            type: 'checkbox',
+            admin:{
+                description: "Check if you want to delete or hide this product"
+            }
+        },
+        {
+            name: 'isPrivate',
+            label: 'Private',
+            defaultValue: false,
+            type: 'checkbox',
+            admin:{
+                description: "Check if you want to make it private"
+            }
         }
+      
     ]
 }
