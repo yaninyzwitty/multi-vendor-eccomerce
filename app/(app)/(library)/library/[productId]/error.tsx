@@ -2,7 +2,7 @@
 
 import {TriangleAlert} from "lucide-react";
 
-export const ErrorPage = () => {
+export default function Error() {
   return (
     <div className="px-4 lg:px-12 py-10">
       <div className="border border-black border-dashed flex items-center justify-center p-8 flex-col gap-y-8 bg-white w-full rounded-lg">
@@ -11,4 +11,4 @@ export const ErrorPage = () => {
       </div>
     </div>
   );
-};
+}

@@ -18,10 +18,15 @@ import {ReviewGetOneOutput} from "../../types";
 import {useTRPC} from "@/trpc/client";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {toast} from "sonner";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface Props {
   productId: string;
   initialData?: ReviewGetOneOutput;
+}
+interface ReviewSkeletonProps {
+  lines?: number;
+  showButtons?: boolean;
 }
 
 const formSchema = z.object({
@@ -155,6 +160,49 @@ export default function ReviewForm({productId, initialData}: Props) {
         >
           Edit
         </Button>
+      )}
+    </div>
+  );
+}
+
+export function ReviewSkeleton({
+  lines = 3,
+  showButtons = true,
+}: ReviewSkeletonProps) {
+  return (
+    <div className="space-y-4 w-full max-w-xl">
+      {/* title */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-5 w-40 rounded-md" />
+        <Skeleton className="h-6 w-16 rounded-md" />
+      </div>
+
+      {/* star row */}
+      <div className="flex items-center gap-2">
+        {Array.from({length: 5}).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-8 rounded-md" />
+        ))}
+      </div>
+
+      {/* description lines */}
+      <div className="space-y-2">
+        {Array.from({length: lines}).map((_, i) => (
+          <Skeleton
+            key={i}
+            className={`h-4 rounded-md ${i === 0 ? "w-full" : i === lines - 1 ? "w-3/4" : "w-11/12"}`}
+          />
+        ))}
+      </div>
+
+      {/* textarea preview box */}
+      <Skeleton className="h-24 w-full rounded-md" />
+
+      {/* buttons */}
+      {showButtons && (
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-32 rounded-2xl" />
+          <Skeleton className="h-10 w-20 rounded-2xl" />
+        </div>
       )}
     </div>
   );

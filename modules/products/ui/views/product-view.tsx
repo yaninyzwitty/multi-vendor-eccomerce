@@ -11,8 +11,10 @@ import Image from "next/image";
 import Link from "next/link";
 import {Fragment, useState} from "react";
 import {toast} from "sonner";
-// import {CartButton} from "../components/cart-button"; -- causes hydration errors,❌ - use next/dynamic
-import {RichText} from "@payloadcms/richtext-lexical/react";
+import {
+  defaultJSXConverters,
+  RichText,
+} from "@payloadcms/richtext-lexical/react";
 
 interface ProductViewProps {
   tenantSlug: string;
@@ -114,7 +116,11 @@ export function ProductView({productId, tenantSlug}: ProductViewProps) {
                   <p className="text-base font-medium">{product.description}</p>
                 ) : (
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <RichText data={product.description} className="prose" />
+                  <RichText
+                    data={product.description}
+                    converters={defaultJSXConverters}
+                    className="prose"
+                  />
                 )
               ) : (
                 <p className="text-muted-foreground italic font-medium">
