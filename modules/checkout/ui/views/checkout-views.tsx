@@ -33,7 +33,7 @@ export function CheckoutView({tenantSlug}: Props) {
         setStates({success: false, cancel: false});
       },
       onSuccess: (data) => {
-        window.location.href = data.url;
+        window.location.href = data.url; // 302 localhost:3000 -> https://checkout.paystack.com/dg1vwb2ezgh2um1'
       },
       onError: (error) => {
         if (error.data?.code === "UNAUTHORIZED") {

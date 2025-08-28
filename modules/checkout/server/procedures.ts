@@ -5,8 +5,52 @@ import Stripe from "stripe";
 import { z } from "zod";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { stripe } from "@/lib/stripe";
+import { PLATFORM_FEE_PERCENT } from "@/modules/tags/constants";
 
 export const checkoutRouter = createTRPCRouter({
+    verifyProcedure:
+        protectedProcedure
+            .mutation(async ({ ctx }) => {
+
+                const user = await ctx.db.findByID({
+                    id: ctx.session.user.id,
+                    collection: 'users',
+                    depth: 0
+                });
+
+                if(!user) {
+                    throw new TRPCError({code:'NOT_FOUND', message: 'user not found'})
+                };
+
+                const tenantId = user.tenants?.[0]?.tenant; // tenant id because depth is 0
+
+                const tenant = await ctx.db.findByID({
+                    collection: 'tenants',
+                    id: tenantId as string,
+                });
+
+                if (!tenant) {
+                    throw new TRPCError({ code: 'NOT_FOUND', message: "Tenant not found"})
+                }
+
+                const accountLink = await stripe.accountLinks.create({
+                    account: tenant.StripeAccountId,
+                    refresh_url: `${process.env.NEXT_PUBLIC_APP_URL!}/admin`,
+                    return_url: `${process.env.NEXT_PUBLIC_APP_URL!}/admin`,
+                    type: 'account_onboarding'
+                });
+
+                if(!accountLink.url) {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'failed to create verification link'})
+                };
+                
+                return {
+                    url: accountLink.url
+                };
+                
+
+
+            }),
     purchase: 
     protectedProcedure
         .input(z.object({
@@ -25,6 +69,11 @@ export const checkoutRouter = createTRPCRouter({
                             "tenant.slug": {
                                 equals: input.tenantSlug
                             },
+                        },
+                        {
+                            isArchived: {
+                                not_equals: true
+                            }
                         }
                     ]
                 }
@@ -55,6 +104,9 @@ export const checkoutRouter = createTRPCRouter({
             if(!tenant) {
                 throw new TRPCError({code: 'NOT_FOUND', message: "Tenant not found"})
             }
+            if(!tenant.stripeDetailSubmitted) {
+                throw new TRPCError({code: 'BAD_REQUEST', message: "Tenant not allowed to sell products"})
+            }
             // TODO-THROW error if stripe details not submitted
             const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = products.docs.map((product) => ({
                 quantity: 1,
@@ -75,12 +127,26 @@ export const checkoutRouter = createTRPCRouter({
 
             }));
 
+            const totalAmount = products.docs.reduce((acc, item) => acc + item.price * 100, 0);
+            const platformFeeAmount = Math.round(
+                totalAmount * (PLATFORM_FEE_PERCENT / 100)
+            );
+
+
+
+
+
+
             const checkout = await stripe.checkout.sessions.create({
                 customer_email: ctx.session.user.email,
                 success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
                 cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?cancel=true`,
                 mode: 'payment',
                 line_items: lineItems,
+                payment_intent_data: {
+                    application_fee_amount: platformFeeAmount,
+
+                },
                 invoice_creation: {
                     enabled: true
                 },
@@ -89,6 +155,8 @@ export const checkoutRouter = createTRPCRouter({
                 } as CheckoutMetadata
 
                 
+            }, {
+                stripeAccount: tenant.StripeAccountId
             })
 
             if(!checkout.url) {
@@ -123,9 +191,18 @@ export const checkoutRouter = createTRPCRouter({
                     collection: "products",
                     depth: 2, //populate image and category, tenant, tenant.image,
                     where: {
-                        id: {
-                            in: input.ids
+                      and: [
+                        {
+                            id: {
+                                in: input.ids
+                            }
+                        },
+                        {
+                            isArchived: {
+                                not_equals: true
+                            }
                         }
+                      ]
                     },
                     // Explicitly select all fields to ensure price is included
                     select: {

@@ -23,12 +23,17 @@ import { Config } from './payload-types'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+         beforeNavLinks: ["@/components/StripeVerify#StripeVerify"]
+      
+    }
   },
   collections: [Users, Media, Categories, Products, Tags, Tenants, Orders, Reviews],
   editor: lexicalEditor(),
@@ -43,7 +48,7 @@ export default buildConfig({
   plugins: [
     multiTenantPlugin<Config>({
       collections: {
-        products: {}
+        products: {},
 
       },
       tenantsArrayField: {
