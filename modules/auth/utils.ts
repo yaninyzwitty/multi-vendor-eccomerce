@@ -12,10 +12,11 @@ export const generateAuthCookie = async ({ prefix, value  }: Props) => {
     name: `${prefix}-token`,
     value,
     httpOnly: true,
-    // secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'none',
     maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: '/'
+    path: '/',
+    domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN
     });
 
     console.log('cookies set')
