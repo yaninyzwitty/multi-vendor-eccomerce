@@ -3,6 +3,8 @@ import {DEFAULT_LIMIT} from "@/modules/tags/constants";
 import {getQueryClient, trpc} from "@/trpc/server";
 import {dehydrate, HydrationBoundary} from "@tanstack/react-query";
 
+export const dynamic = "force-dynamic";
+
 export default async function Library() {
   const queryClient = getQueryClient();
   void queryClient.prefetchInfiniteQuery(

@@ -9,6 +9,9 @@ interface CategoryPageProps {
     tags: string[] | null;
   }>;
 }
+
+export const dynamic = "force-dynamic";
+
 export default async function CategoryPage({searchParams}: CategoryPageProps) {
   const {maxPrice, minPrice, tags} = await searchParams;
 

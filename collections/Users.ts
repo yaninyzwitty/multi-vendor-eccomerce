@@ -44,11 +44,11 @@ export const Users: CollectionConfig = {
     hidden: ({user  }) => !isSuperAdmin(user)// only admins can see users
   },
   auth: {
-    cookies: {
-      sameSite: 'None',
-      domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
-      secure: process.env.NODE_ENV === 'production',
-    }
+    // cookies: {
+    //   sameSite: 'None',
+    //   domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+    //   secure: process.env.NODE_ENV === 'production',
+    // }
   },
   fields: [
     // Email added by default

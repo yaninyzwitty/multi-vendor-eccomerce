@@ -10,6 +10,9 @@ interface SubCategoryPageProps {
     tags: string[] | null;
   }>;
 }
+
+export const dynamic = "force-dynamic";
+
 export default async function SubCategoryPage({
   params,
   searchParams,
@@ -17,7 +20,7 @@ export default async function SubCategoryPage({
   const {subcategory} = await params;
   const {maxPrice, minPrice, tags} = await searchParams;
 
-  // 
+  //
   const queryClient = getQueryClient();
   void queryClient.prefetchInfiniteQuery(
     trpc.products.getMany.infiniteQueryOptions({

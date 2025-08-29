@@ -11,6 +11,9 @@ interface PageProps {
     tags: string[] | null;
   }>;
 }
+
+export const dynamic = "force-dynamic";
+
 export default async function Page({params, searchParams}: PageProps) {
   const {slug} = await params;
   const {maxPrice, minPrice, tags} = await searchParams;

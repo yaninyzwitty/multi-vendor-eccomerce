@@ -1,7 +1,10 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {CategoriesGetManyOutput} from "@/modules/categories/types";
+import {
+  CategoriesGetManyOutput,
+  CategoriesGetSingleOutput,
+} from "@/modules/categories/types";
 import {ListFilterIcon} from "lucide-react";
 import {useParams} from "next/navigation";
 import {useEffect, useRef, useState} from "react";
@@ -122,7 +125,7 @@ export function Categories({data}: Props) {
         {isActiveCategoryHidden && activeCategoryIndex !== -1 && (
           <div className="ml-2">
             <CategoryDropdown
-              category={data[activeCategoryIndex]}
+              category={data?.[0] as CategoriesGetSingleOutput}
               isActive={true}
               isNavigationHovered={isAnyHover}
             />
